@@ -32,6 +32,9 @@ jobs:
         run: |
           git config user.name "dev-activity-bot"
           git config user.email "bot@github.com"
+
           git add .
           git commit -m "Daily automated update" || echo "No changes"
-          git push
+
+          git pull --rebase origin main
+          git push origin main
