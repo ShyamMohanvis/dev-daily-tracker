@@ -1,0 +1,24 @@
+name: Daily Dev Automation
+
+on:
+  schedule:
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  automate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - run: |
+          python scripts/update_activity.py
+          python scripts/update_learning.py
+      - run: |
+          git config user.name "dev-activity-bot"
+          git config user.email "bot@github.com"
+          git add .
+          git commit -m "Daily automated update" || echo "No changes"
+          git push
