@@ -60,3 +60,10 @@ Style: Minimal, professional, flat illustration.
 """
 
 open("linkedin_image_prompt.txt", "w", encoding="utf-8").write(image_prompt.strip())
+
+if day_name == "Sunday":
+    with open("weekly_summary.md", "a", encoding="utf-8") as f:
+        f.write(f"\n## Week of {date_str}\n")
+        f.write("- [ ] Review learning log for this week\n")
+        f.write("- [ ] Identify key takeaways\n")
+        f.write("- [ ] Plan next week's focus\n")
