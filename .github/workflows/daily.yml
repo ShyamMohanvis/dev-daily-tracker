@@ -1,0 +1,51 @@
+name: Daily Learning Update
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs at 00:00 UTC daily
+  workflow_dispatch:      # Allows manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  update-learning:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          
+      - name: Run update scripts
+        run: |
+          python scripts/update_learning.py
+          python scripts/update_activity.py
+          
+      - name: Check for Sunday Summary
+        run: |
+          if [ "$(date +%u)" -eq 7 ]; then
+            python scripts/weekly_summary.py
+          fi
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "ShyamMohanvis"
+          git config --global user.email "Shyammohanvis@gmail.com"
+          
+          git add .
+          
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          git commit -m "📚 Daily learning update - $(date +%Y-%m-%d)"
+          git push

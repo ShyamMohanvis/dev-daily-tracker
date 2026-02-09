@@ -148,24 +148,18 @@ python scripts/weekly_summary.py
 
 ### **Automation**
 
-The workflow runs automatically via **n8n** (replacing the previous GitHub Actions setup):
-- **Schedule**: Daily at 9:00 AM UTC
-- **Trigger**: Can also run manually via n8n UI
-- **Engine**: [n8n](https://n8n.io/) (Self-hosted/Local)
+The workflow runs **100% autonomously** on GitHub Actions (the cloud):
+- **Schedule**: Daily at 00:00 UTC
+- **Trigger**: Runs automatically on GitHub servers (no PC required)
+- **Engine**: GitHub Actions
 
-### **n8n Workflow Setup**
+### **How It Works**
 
-1. **Install n8n**: Download from [n8n.io](https://n8n.io/download/) or run via Docker.
-2. **Import Workflow**: Import `n8n_workflow.json` into your n8n instance.
-3. **Configure**: Update the "Set Repository Path" node to your local project path.
-4. **Activate**: Toggle the workflow to "Active".
+1. **Daily Trigger**: GitHub wakes up the workflow.
+2. **Run Scripts**: Executes `update_learning.py` and `update_activity.py`.
+3. **Commit**: If new content is generated, it commits and pushes to the repo.
 
-For detailed setup instructions, see [`N8N_SETUP.md`](./N8N_SETUP.md).
-
-### **Why n8n?**
-- **Local execution**: No dependency on GitHub infrastructure
-- **Visual workflow**: Easier to understand and modify
-- **Real-time monitoring**: Watch nodes execute live
+> **Note**: You can also run the system locally using **n8n** (see `N8N_SETUP.md`) if you prefer manual control, but GitHub Actions is the recommended way for fully autonomous updates.
 
 ---
 
