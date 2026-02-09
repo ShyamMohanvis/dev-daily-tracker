@@ -148,9 +148,24 @@ python scripts/weekly_summary.py
 
 ### **Automation**
 
-The workflow runs automatically via `.github/workflows/daily.yml`:
+The workflow runs automatically via **n8n** (replacing the previous GitHub Actions setup):
 - **Schedule**: Daily at 9:00 AM UTC
-- **Trigger**: Can also run manually via "Actions" tab
+- **Trigger**: Can also run manually via n8n UI
+- **Engine**: [n8n](https://n8n.io/) (Self-hosted/Local)
+
+### **n8n Workflow Setup**
+
+1. **Install n8n**: Download from [n8n.io](https://n8n.io/download/) or run via Docker.
+2. **Import Workflow**: Import `n8n_workflow.json` into your n8n instance.
+3. **Configure**: Update the "Set Repository Path" node to your local project path.
+4. **Activate**: Toggle the workflow to "Active".
+
+For detailed setup instructions, see [`N8N_SETUP.md`](./N8N_SETUP.md).
+
+### **Why n8n?**
+- **Local execution**: No dependency on GitHub infrastructure
+- **Visual workflow**: Easier to understand and modify
+- **Real-time monitoring**: Watch nodes execute live
 
 ---
 

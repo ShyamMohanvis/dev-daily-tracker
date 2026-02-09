@@ -1,0 +1,380 @@
+{
+    "name": "Dev Daily Tracker Automation",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "cronExpression",
+                            "expression": "0 9 * * *"
+                        }
+                    ]
+                }
+            },
+            "id": "schedule-trigger",
+            "name": "Daily Schedule (9:00 AM UTC)",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.1,
+            "position": [
+                240,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "command": "={{ $json.repoPath ? 'cd ' + $json.repoPath + ' && git pull origin main' : 'git pull origin main' }}"
+            },
+            "id": "git-pull",
+            "name": "Git Pull Latest",
+            "type": "n8n-nodes-base.executeCommand",
+            "typeVersion": 1,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "command": "={{ $json.repoPath ? 'cd ' + $json.repoPath + ' && python scripts/update_activity.py' : 'python scripts/update_activity.py' }}"
+            },
+            "id": "run-activity",
+            "name": "Run Activity Tracker",
+            "type": "n8n-nodes-base.executeCommand",
+            "typeVersion": 1,
+            "position": [
+                680,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "command": "={{ $json.repoPath ? 'cd ' + $json.repoPath + ' && python scripts/update_learning.py' : 'python scripts/update_learning.py' }}"
+            },
+            "id": "run-learning",
+            "name": "Run Learning Update",
+            "type": "n8n-nodes-base.executeCommand",
+            "typeVersion": 1,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "number": [
+                        {
+                            "value1": "={{ new Date().getDay() }}",
+                            "operation": "equal",
+                            "value2": 0
+                        }
+                    ]
+                }
+            },
+            "id": "check-sunday",
+            "name": "Is Sunday?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1120,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "command": "={{ $json.repoPath ? 'cd ' + $json.repoPath + ' && python scripts/weekly_summary.py' : 'python scripts/weekly_summary.py' }}"
+            },
+            "id": "run-weekly",
+            "name": "Run Weekly Summary",
+            "type": "n8n-nodes-base.executeCommand",
+            "typeVersion": 1,
+            "position": [
+                1340,
+                180
+            ]
+        },
+        {
+            "parameters": {},
+            "id": "merge-branches",
+            "name": "Merge Paths",
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 2.1,
+            "position": [
+                1560,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "command": "={{ $json.repoPath ? 'cd ' + $json.repoPath + ' && git status --porcelain' : 'git status --porcelain' }}"
+            },
+            "id": "git-status",
+            "name": "Check Git Status",
+            "type": "n8n-nodes-base.executeCommand",
+            "typeVersion": 1,
+            "position": [
+                1780,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.stdout }}",
+                            "operation": "isNotEmpty"
+                        }
+                    ]
+                }
+            },
+            "id": "check-changes",
+            "name": "Has Changes?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                2000,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "command": "={{ $json.repoPath ? 'cd ' + $json.repoPath + ' && git add .' : 'git add .' }}"
+            },
+            "id": "git-add",
+            "name": "Git Add All",
+            "type": "n8n-nodes-base.executeCommand",
+            "typeVersion": 1,
+            "position": [
+                2220,
+                180
+            ]
+        },
+        {
+            "parameters": {
+                "command": "={{ $json.repoPath ? 'cd ' + $json.repoPath : 'pwd' }}",
+                "additionalFields": {}
+            },
+            "id": "git-commit-push",
+            "name": "Git Commit & Push",
+            "type": "n8n-nodes-base.executeCommand",
+            "typeVersion": 1,
+            "position": [
+                2440,
+                180
+            ],
+            "credentials": {},
+            "parametersValues": {
+                "command": "={{ $json.repoPath ? 'cd ' + $json.repoPath + ' && ' : '' }}git config user.name \"ShyamMohanvis\" && git config user.email \"Shyammohanvis@gmail.com\" && git commit -m \"📚 Daily learning update - $(date +%Y-%m-%d)\" && git push origin main"
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "return [\n  {\n    json: {\n      message: '✅ Workflow completed successfully - Changes committed and pushed',\n      timestamp: new Date().toISOString()\n    }\n  }\n];"
+            },
+            "id": "success-with-changes",
+            "name": "Success With Changes",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2660,
+                180
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return [\n  {\n    json: {\n      message: '✅ Workflow completed successfully - No changes to commit',\n      timestamp: new Date().toISOString()\n    }\n  }\n];"
+            },
+            "id": "success-no-changes",
+            "name": "Success No Changes",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2220,
+                420
+            ]
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "name": "repoPath",
+                            "value": "={{ $env.DEV_TRACKER_REPO_PATH || 'c:\\\\Users\\\\SHYAM MOHAN\\\\Desktop\\\\sdxfcgvhj\\\\dev-daily-tracker' }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "set-repo-path",
+            "name": "Set Repository Path",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.3,
+            "position": [
+                240,
+                300
+            ],
+            "alwaysOutputData": true,
+            "executeOnce": true
+        }
+    ],
+    "connections": {
+        "Daily Schedule (9:00 AM UTC)": {
+            "main": [
+                [
+                    {
+                        "node": "Set Repository Path",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Set Repository Path": {
+            "main": [
+                [
+                    {
+                        "node": "Git Pull Latest",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Git Pull Latest": {
+            "main": [
+                [
+                    {
+                        "node": "Run Activity Tracker",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Run Activity Tracker": {
+            "main": [
+                [
+                    {
+                        "node": "Run Learning Update",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Run Learning Update": {
+            "main": [
+                [
+                    {
+                        "node": "Is Sunday?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Is Sunday?": {
+            "main": [
+                [
+                    {
+                        "node": "Run Weekly Summary",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Merge Paths",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Run Weekly Summary": {
+            "main": [
+                [
+                    {
+                        "node": "Merge Paths",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Merge Paths": {
+            "main": [
+                [
+                    {
+                        "node": "Check Git Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Check Git Status": {
+            "main": [
+                [
+                    {
+                        "node": "Has Changes?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Has Changes?": {
+            "main": [
+                [
+                    {
+                        "node": "Git Add All",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Success No Changes",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Git Add All": {
+            "main": [
+                [
+                    {
+                        "node": "Git Commit & Push",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Git Commit & Push": {
+            "main": [
+                [
+                    {
+                        "node": "Success With Changes",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {},
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null,
+    "tags": [],
+    "triggerCount": 1,
+    "updatedAt": "2026-02-05T11:08:13.000Z",
+    "versionId": "1"
+}
