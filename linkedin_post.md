@@ -1,7 +1,7 @@
 🚀 Daily Learning Update
 
-Today I explored **Event-Driven Architecture** (System Design).
+Today I explored **Graph Traversal (BFS/DFS)** (DSA).
 
-Event-driven systems communicate through asynchronous event notifications.
+BFS explores level-by-level; DFS explores depth-first with backtracking.
 
 #LearningInPublic #AI #DSA #SystemDesign #SoftwareEngineering

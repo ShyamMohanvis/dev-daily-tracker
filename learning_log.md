@@ -1622,3 +1622,10 @@ Transformers use self-attention mechanisms to process sequences in parallel.
 Event-driven systems communicate through asynchronous event notifications.
 
 🔗 Reference: https://aws.amazon.com/event-driven-architecture/
+
+## 2026-09-23 — [DSA] Graph Traversal (BFS/DFS)
+**Difficulty:** Intermediate
+
+BFS explores level-by-level; DFS explores depth-first with backtracking.
+
+🔗 Reference: https://leetcode.com/problems/number-of-islands/
