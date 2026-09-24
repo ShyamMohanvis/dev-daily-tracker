@@ -1629,3 +1629,10 @@ Event-driven systems communicate through asynchronous event notifications.
 BFS explores level-by-level; DFS explores depth-first with backtracking.
 
 🔗 Reference: https://leetcode.com/problems/number-of-islands/
+
+## 2026-09-24 — [AI] Embedding Spaces
+**Difficulty:** Intermediate
+
+Embeddings map discrete tokens to continuous vector representations.
+
+🔗 Reference: https://www.tensorflow.org/text/guide/word_embeddings
