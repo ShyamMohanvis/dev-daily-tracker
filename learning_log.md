@@ -1636,3 +1636,10 @@ BFS explores level-by-level; DFS explores depth-first with backtracking.
 Embeddings map discrete tokens to continuous vector representations.
 
 🔗 Reference: https://www.tensorflow.org/text/guide/word_embeddings
+
+## 2026-09-25 — [DSA] Dynamic Programming Patterns
+**Difficulty:** Advanced
+
+DP breaks problems into overlapping subproblems with optimal substructure.
+
+🔗 Reference: https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns
