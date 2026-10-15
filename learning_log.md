@@ -1776,3 +1776,10 @@ Rate limiting controls request rates to prevent abuse and overload.
 Indexes accelerate database queries by creating searchable data structures.
 
 🔗 Reference: https://use-the-index-luke.com/
+
+## 2026-10-15 — [AI] Diffusion Models
+**Difficulty:** Advanced
+
+Diffusion models generate images by iteratively denoising random noise.
+
+🔗 Reference: https://arxiv.org/abs/2006.11239
